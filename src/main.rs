@@ -16,7 +16,16 @@ fn scale(v: &mut [i64], k: i64) {
     }
 }
 
+fn print_matrix(matrix: Vec<Vec<i64>>) {
+    for row in 0..matrix.len() {
+        println!("{}:{:?}", row, matrix[row]);
+    }
+}
 fn reduce_row(target_row: &mut [i64], source_row: &mut [i64], column: usize) {
+    println!(
+        "reduce row {:?} with source row {:?}",
+        target_row, source_row
+    );
     if target_row[column] == 0 {
         return;
     };
@@ -32,29 +41,46 @@ fn reduce_row(target_row: &mut [i64], source_row: &mut [i64], column: usize) {
     }
 }
 
-fn reduce(matrix: &mut Vec<Vec<i64>>) {
-    fn swap(v: &mut [i64], w: &mut [i64]) {
-        for i in 0..v.len() {
-            let tmp: i64 = v[i];
-            v[i] = w[i];
-            w[i] = tmp;
-        }
+fn swap(v: &mut [i64], w: &mut [i64]) {
+    println!("swap rows {:?} and {:?}", v, w);
+    for i in 0..v.len() {
+        let tmp: i64 = v[i];
+        v[i] = w[i];
+        w[i] = tmp;
     }
+}
+
+fn reduce(matrix: &mut Vec<Vec<i64>>) {
+    println!("initial:");
+    print_matrix(matrix.to_vec());
+    let mut pivot_row: usize = 0;
     for d in 0..matrix.len() {
+        println!("column {d}:");
         for r in d..matrix.len() {
+            println!("row {r}:");
             if matrix[r][d] != 0 {
-                let (a, b) = matrix.split_at_mut(r);
-                swap(&mut a[r - 1], &mut b[0]);
+                if r != d {
+                    let (a, b) = matrix.split_at_mut(r);
+                    println!("a:{:?} b:{:?}", a, b);
+                    swap(&mut a[d], &mut b[0]);
+                }
+                pivot_row = r;
                 break;
             };
         }
+        assert!(matrix[d][d] != 0);
         if matrix[d][d] < 0 {
             scale(&mut matrix[d], -1)
         };
-        for r in d + 1..matrix.len() {
+        println!("d={d}, row reductions for");
+        print_matrix(matrix.to_vec());
+        for r in d+1..matrix.len() {
             let (a, b) = matrix.split_at_mut(r);
-            reduce_row(&mut a[r - 1], &mut b[0], d)
+            reduce_row(&mut b[0], &mut a[d], d);
+            print_matrix(matrix.to_vec());
         }
+        println!("** column {d} done **");
+        print_matrix(matrix.to_vec());
     }
 }
 
