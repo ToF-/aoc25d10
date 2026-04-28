@@ -14,4 +14,6 @@ reduce_row	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^fn reduce_row(
 reducing_a_matrix	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^    fn reducing_a_matrix() {$/;"	f
 scale	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^fn scale(v: &mut [i64], k: i64) {$/;"	f
 scaling_a_vector	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^    fn scaling_a_vector() {$/;"	f
+solve_matrix	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^fn solve_matrix($/;"	f
+solving_a_simple_matrix	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^    fn solving_a_simple_matrix() {$/;"	f
 swap	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^fn swap(v: &mut [i64], w: &mut [i64]) {$/;"	f

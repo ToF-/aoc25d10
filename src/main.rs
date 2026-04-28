@@ -1,3 +1,5 @@
+ use std::cmp::min;
+
 fn lcm(a: i64, b: i64) -> i64 {
     fn gcd(mut a: i64, mut b: i64) -> i64 {
         while b != 0 {
@@ -74,7 +76,7 @@ fn reduce(matrix: &mut Vec<Vec<i64>>) {
         };
         println!("d={d}, row reductions for");
         print_matrix(matrix.to_vec());
-        for r in d+1..matrix.len() {
+        for r in d + 1..matrix.len() {
             let (a, b) = matrix.split_at_mut(r);
             reduce_row(&mut b[0], &mut a[d], d);
             print_matrix(matrix.to_vec());
@@ -84,6 +86,27 @@ fn reduce(matrix: &mut Vec<Vec<i64>>) {
     }
 }
 
+fn solve_matrix(
+    matrix: &Vec<Vec<i64>>,
+    row: usize,
+    solution: &mut Vec<i64>,
+    minimum: &mut i64,
+) {
+    println!("{:?}", solution);
+    assert!(matrix[row][row] > 0);
+    let mut row_target_sum: i64 = *matrix[row].last().expect("vector is empty");
+    for k in (row + 1)..solution.len() {
+        row_target_sum = row_target_sum - matrix[row][k] * solution[k];
+    }
+    assert!(row_target_sum % matrix[row][row] == 0);
+    solution[row] = row_target_sum / matrix[row][row];
+    if row > 0 {
+        solve_matrix(matrix, row - 1, solution, minimum);
+    } else {
+        *minimum = min(*minimum, solution.iter().sum());
+        return;
+    }
+}
 fn main() {
     println!("Hello, world!");
 }
@@ -120,5 +143,20 @@ mod tests {
             ],
             m
         );
+    }
+    #[test]
+    fn solving_a_simple_matrix() {
+        let m = vec![
+            vec![1, 0, 1, 0, 16],
+            vec![0, 1, 1, 0, 23],
+            vec![0, 0, 1, -1, 9],
+            vec![0, 0, 0, 1, 3],
+        ];
+        let mut minimum:i64 = 10000000;
+        let initial_row = m.len() - 1;
+        let mut solution: Vec<i64> = vec![0; m.len()];
+        solve_matrix(&m, initial_row, &mut solution, &mut minimum);
+        assert_eq!(30, minimum);
+
     }
 }
