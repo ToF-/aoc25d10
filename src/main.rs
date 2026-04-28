@@ -1,4 +1,4 @@
- use std::cmp::min;
+use std::cmp::min;
 
 fn lcm(a: i64, b: i64) -> i64 {
     fn gcd(mut a: i64, mut b: i64) -> i64 {
@@ -24,27 +24,21 @@ fn print_matrix(matrix: Vec<Vec<i64>>) {
     }
 }
 fn reduce_row(target_row: &mut [i64], source_row: &mut [i64], column: usize) {
-    println!(
-        "reduce row {:?} with source row {:?}",
-        target_row, source_row
-    );
-    if target_row[column] == 0 {
-        return;
-    };
-    assert!(source_row[column] > 0);
-    if target_row[column] < 0 {
-        scale(target_row, -1)
-    };
-    let scale_to: i64 = lcm(target_row[column], source_row[column]);
-    scale(target_row, scale_to / target_row[column]);
-    scale(source_row, scale_to / source_row[column]);
-    for i in 0..target_row.len() {
-        target_row[i] -= source_row[i]
+    if target_row[column] != 0 {
+        assert!(source_row[column] > 0);
+        if target_row[column] < 0 {
+            scale(target_row, -1)
+        };
+        let lcm: i64 = lcm(target_row[column], source_row[column]);
+        scale(target_row, lcm / target_row[column]);
+        scale(source_row, lcm / source_row[column]);
+        for col in 0..target_row.len() {
+            target_row[col] -= source_row[col]
+        }
     }
 }
 
 fn swap(v: &mut [i64], w: &mut [i64]) {
-    println!("swap rows {:?} and {:?}", v, w);
     for i in 0..v.len() {
         let tmp: i64 = v[i];
         v[i] = w[i];
@@ -52,47 +46,35 @@ fn swap(v: &mut [i64], w: &mut [i64]) {
     }
 }
 
+fn swap_rows(matrix: &mut Vec<Vec<i64>>, source: usize, target: usize) {
+    let (lower, upper) = matrix.split_at_mut(target);
+    swap(&mut lower[source], &mut upper[0])
+}
+
 fn reduce(matrix: &mut Vec<Vec<i64>>) {
-    println!("initial:");
-    print_matrix(matrix.to_vec());
-    let mut pivot_row: usize = 0;
-    for d in 0..matrix.len() {
-        println!("column {d}:");
-        for r in d..matrix.len() {
-            println!("row {r}:");
-            if matrix[r][d] != 0 {
-                if r != d {
-                    let (a, b) = matrix.split_at_mut(r);
-                    println!("a:{:?} b:{:?}", a, b);
-                    swap(&mut a[d], &mut b[0]);
+    let diag_end = min(matrix.len(), matrix[0].len() - 1);
+    for diag_index in 0..diag_end {
+        for row in diag_index..diag_end {
+            if matrix[row][diag_index] != 0 {
+                if row != diag_index {
+                    swap_rows(matrix, diag_index, row);
                 }
-                pivot_row = r;
                 break;
             };
         }
-        assert!(matrix[d][d] != 0);
-        if matrix[d][d] < 0 {
-            scale(&mut matrix[d], -1)
+        assert!(matrix[diag_index][diag_index] != 0);
+        if matrix[diag_index][diag_index] < 0 {
+            scale(&mut matrix[diag_index], -1)
         };
-        println!("d={d}, row reductions for");
         print_matrix(matrix.to_vec());
-        for r in d + 1..matrix.len() {
-            let (a, b) = matrix.split_at_mut(r);
-            reduce_row(&mut b[0], &mut a[d], d);
-            print_matrix(matrix.to_vec());
+        for row in diag_index + 1..matrix.len() {
+            let (lower, upper) = matrix.split_at_mut(row);
+            reduce_row(&mut upper[0], &mut lower[diag_index], diag_index);
         }
-        println!("** column {d} done **");
-        print_matrix(matrix.to_vec());
     }
 }
 
-fn solve_matrix(
-    matrix: &Vec<Vec<i64>>,
-    row: usize,
-    solution: &mut Vec<i64>,
-    minimum: &mut i64,
-) {
-    println!("{:?}", solution);
+fn solve_matrix(matrix: &Vec<Vec<i64>>, row: usize, solution: &mut Vec<i64>, minimum: &mut i64) {
     assert!(matrix[row][row] > 0);
     let mut row_target_sum: i64 = *matrix[row].last().expect("vector is empty");
     for k in (row + 1)..solution.len() {
@@ -104,7 +86,6 @@ fn solve_matrix(
         solve_matrix(matrix, row - 1, solution, minimum);
     } else {
         *minimum = min(*minimum, solution.iter().sum());
-        return;
     }
 }
 fn main() {
@@ -152,11 +133,28 @@ mod tests {
             vec![0, 0, 1, -1, 9],
             vec![0, 0, 0, 1, 3],
         ];
-        let mut minimum:i64 = 10000000;
+        let mut minimum: i64 = 10000000;
         let initial_row = m.len() - 1;
         let mut solution: Vec<i64> = vec![0; m.len()];
         solve_matrix(&m, initial_row, &mut solution, &mut minimum);
         assert_eq!(30, minimum);
+    }
+    #[test]
+    fn over_specified_matrix_doesnt_matter() {
+        let m = vec![
+            vec![1, 0, 1, 0, 16],
+            vec![0, 1, 1, 0, 23],
+            vec![0, 0, 1, -1, 9],
+            vec![0, 0, 0, 1, 3],
+            vec![0, 0, 0, 1, 3],
+            vec![0, 0, 0, 1, 3],
+        ];
+        let mut minimum: i64 = 10000000;
+        let diag_end = min(m.len(), m[0].len() -  1);
+        let initial_row = diag_end - 1;
 
+        let mut solution: Vec<i64> = vec![0; diag_end];
+        solve_matrix(&m, initial_row, &mut solution, &mut minimum);
+        assert_eq!(30, minimum);
     }
 }
