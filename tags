@@ -7,7 +7,11 @@
 gcd	/Users/tof/Coding/aoc2025d10/src/main.rs	/^    fn gcd(mut a: i64, mut b: i64) -> i64 {$/;"	f
 lcm	/Users/tof/Coding/aoc2025d10/src/main.rs	/^fn lcm(a: i64, b: i64) -> i64 {$/;"	f
 lowest_common_multiple	/Users/tof/Coding/aoc2025d10/src/main.rs	/^    fn lowest_common_multiple() {$/;"	f
+machine_matrix	/Users/tof/Coding/aoc2025d10/src/main.rs	/^fn machine_matrix(buttons: &Vec<Vec<usize>>, joltages: &Vec<i64>) -> Vec<Vec<i64>> {$/;"	f
+machine_matrix_from_input	/Users/tof/Coding/aoc2025d10/src/main.rs	/^    fn machine_matrix_from_input() {$/;"	f
 main	/Users/tof/Coding/aoc2025d10/src/main.rs	/^fn main() {$/;"	f
+minimum_presses	/Users/tof/Coding/aoc2025d10/src/main.rs	/^fn minimum_presses(_buttons: &Vec<Vec<usize>>, _joltages: &Vec<i64>) -> i64 {$/;"	f
+minimum_presses_nominal_case	/Users/tof/Coding/aoc2025d10/src/main.rs	/^    fn minimum_presses_nominal_case() {$/;"	f
 over_specified_matrix_doesnt_matter	/Users/tof/Coding/aoc2025d10/src/main.rs	/^    fn over_specified_matrix_doesnt_matter() {$/;"	f
 print_matrix	/Users/tof/Coding/aoc2025d10/src/main.rs	/^fn print_matrix(matrix: Vec<Vec<i64>>) {$/;"	f
 reduce	/Users/tof/Coding/aoc2025d10/src/main.rs	/^fn reduce(matrix: &mut Vec<Vec<i64>>) {$/;"	f

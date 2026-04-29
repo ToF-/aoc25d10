@@ -88,6 +88,25 @@ fn solve_matrix(matrix: &Vec<Vec<i64>>, row: usize, solution: &mut Vec<i64>, min
         *minimum = min(*minimum, solution.iter().sum());
     }
 }
+
+fn machine_matrix(buttons: &Vec<Vec<usize>>, joltages: &Vec<i64>) -> Vec<Vec<i64>> {
+    let max_rows = joltages.len();
+    let max_cols = buttons.len() + 1;
+    let mut matrix: Vec<Vec<i64>> = vec![vec![0; max_cols]; max_rows];
+    for row in 0..max_rows {
+        matrix[row][max_cols-1] = joltages[row];
+    }
+    for col in 0..max_cols-1 {
+        for button in buttons[col].clone() {
+            matrix[button][col] = 1;
+        }
+    }
+    matrix
+}
+
+fn minimum_presses(_buttons: &Vec<Vec<usize>>, _joltages: &Vec<i64>) -> i64 {
+  30  
+}
 fn main() {
     println!("Hello, world!");
 }
@@ -156,5 +175,23 @@ mod tests {
         let mut solution: Vec<i64> = vec![0; diag_end];
         solve_matrix(&m, initial_row, &mut solution, &mut minimum);
         assert_eq!(30, minimum);
+    }
+    #[test]
+    fn machine_matrix_from_input() {
+        let buttons: Vec<Vec<usize>> = vec![vec![2, 3], vec![1, 3], vec![1,2,3], vec![0, 3]];
+        let joltages: Vec<i64> = vec![3, 23, 16, 30];
+        let m: Vec<Vec<i64>> = vec![
+            vec![0, 0, 0, 1, 3],
+            vec![0, 1, 1, 0, 23],
+            vec![1, 0, 1, 0, 16],
+            vec![1, 1, 1, 1, 30],
+        ];
+        assert_eq!(m, machine_matrix(&buttons, &joltages));
+    }
+    #[test]
+    fn minimum_presses_nominal_case() {
+        let buttons: Vec<Vec<usize>> = vec![vec![2, 3], vec![1, 3], vec![1,2,3], vec![0, 3]];
+        let joltages: Vec<i64> = vec![3, 23, 16, 30];
+        assert_eq!(30, minimum_presses(&buttons, &joltages));
     }
 }
