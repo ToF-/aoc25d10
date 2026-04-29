@@ -52,26 +52,29 @@ fn swap_rows(matrix: &mut Vec<Vec<i64>>, source: usize, target: usize) {
 }
 
 fn reduce(matrix: &mut Vec<Vec<i64>>) {
+    println!("starting with matrix");
+    print_matrix(matrix.to_vec());
     let diag_end = min(matrix.len(), matrix[0].len() - 1);
     for diag_index in 0..diag_end {
         for row in diag_index..diag_end {
             if matrix[row][diag_index] != 0 {
+                println!("pivot found in {row} {diag_index}");
                 if row != diag_index {
                     swap_rows(matrix, diag_index, row);
                 }
                 break;
             };
         }
-        assert!(matrix[diag_index][diag_index] != 0);
         if matrix[diag_index][diag_index] < 0 {
             scale(&mut matrix[diag_index], -1)
         };
-        print_matrix(matrix.to_vec());
-        println!("***");
         for row in diag_index + 1..matrix.len() {
             let (lower, upper) = matrix.split_at_mut(row);
             reduce_row(&mut upper[0], &mut lower[diag_index], diag_index);
         }
+        println!("after row reduction");
+        print_matrix(matrix.to_vec());
+        println!("***");
     }
 }
 
@@ -95,13 +98,19 @@ fn solve_matrix(
 ) {
     assert!(matrix[row][row] > 0);
     if next > row {
-        for guess in 0..constraints[next] + 1 {
+        for guess in 0..=constraints[next] {
             solution[next] = guess;
-            solve_matrix(matrix, row, next - 1, constraints, solution, minimum);
-            return;
+            solve_matrix(matrix, row, next - 1, constraints.clone(), solution, minimum);
         }
+        return;
     }
-    assert!(matrix[row][next] > 0);
+    if matrix[row][next] == 0 {
+        for guess in 0..=constraints[next] {
+            solution[next] = guess;
+            solve_matrix(matrix, row - 1, next - 1, constraints.clone(), solution, minimum)
+        }
+        return;
+    }
     let mut row_target_sum: i64 = *matrix[row].last().expect("vector is empty");
     for k in (row + 1)..solution.len() {
         row_target_sum = row_target_sum - matrix[row][k] * solution[k];
@@ -199,7 +208,8 @@ mod tests {
         let buttons: Vec<Vec<usize>> = vec![vec![2, 3], vec![1, 3], vec![1, 2, 3], vec![0, 3]];
         let joltages: Vec<i64> = vec![3, 23, 16, 30];
         let constraints = set_constraints(&buttons, &joltages);
-        solve_matrix(&m, initial_row, 0, constraints, &mut solution, &mut minimum);
+        let next = buttons.len()-1;
+        solve_matrix(&m, initial_row, next, constraints, &mut solution, &mut minimum);
         assert_eq!(30, minimum);
     }
     #[test]
@@ -227,7 +237,8 @@ mod tests {
         let buttons: Vec<Vec<usize>> = vec![vec![2, 3], vec![1, 3], vec![1, 2, 3], vec![0, 3]];
         let joltages: Vec<i64> = vec![3, 23, 16, 30];
         let constraints = set_constraints(&buttons, &joltages);
-        solve_matrix(&m, initial_row, 0, constraints, &mut solution, &mut minimum);
+        let next = buttons.len()-1;
+        solve_matrix(&m, initial_row, next, constraints, &mut solution, &mut minimum);
         assert_eq!(30, minimum);
     }
     #[test]

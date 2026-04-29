@@ -4,25 +4,25 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
-gcd	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^    fn gcd(mut a: i64, mut b: i64) -> i64 {$/;"	f
-lcm	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^fn lcm(a: i64, b: i64) -> i64 {$/;"	f
-lowest_common_multiple	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^    fn lowest_common_multiple() {$/;"	f
-machine_matrix	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^fn machine_matrix(buttons: &Vec<Vec<usize>>, joltages: &Vec<i64>) -> Vec<Vec<i64>> {$/;"	f
-machine_matrix_from_input	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^    fn machine_matrix_from_input() {$/;"	f
-main	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^fn main() {$/;"	f
-minimum_presses	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^fn minimum_presses(buttons: &Vec<Vec<usize>>, joltages: &Vec<i64>) -> i64 {$/;"	f
-minimum_presses_nominal_case	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^    fn minimum_presses_nominal_case() {$/;"	f
-minimum_presses_other_nominal_case	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^    fn minimum_presses_other_nominal_case() {$/;"	f
-over_specified_matrix_doesnt_matter	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^    fn over_specified_matrix_doesnt_matter() {$/;"	f
-print_matrix	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^fn print_matrix(matrix: Vec<Vec<i64>>) {$/;"	f
-reduce	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^fn reduce(matrix: &mut Vec<Vec<i64>>) {$/;"	f
-reduce_row	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^fn reduce_row(target_row: &mut [i64], source_row: &mut [i64], column: usize) {$/;"	f
-reducing_a_matrix	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^    fn reducing_a_matrix() {$/;"	f
-scale	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^fn scale(v: &mut [i64], k: i64) {$/;"	f
-scaling_a_vector	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^    fn scaling_a_vector() {$/;"	f
-set_constraints	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^fn set_constraints(buttons: &Vec<Vec<usize>>, joltages: &Vec<i64>) -> Vec<i64> {$/;"	f
-set_constraints_on_buttons_groups	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^    fn set_constraints_on_buttons_groups() {$/;"	f
-solve_matrix	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^fn solve_matrix($/;"	f
-solving_a_simple_matrix	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^    fn solving_a_simple_matrix() {$/;"	f
-swap	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^fn swap(v: &mut [i64], w: &mut [i64]) {$/;"	f
-swap_rows	/Users/christophethibaut/Coding/aoc25d10/src/main.rs	/^fn swap_rows(matrix: &mut Vec<Vec<i64>>, source: usize, target: usize) {$/;"	f
+gcd	/Users/tof/Coding/aoc2025d10/src/main.rs	/^    fn gcd(mut a: i64, mut b: i64) -> i64 {$/;"	f
+lcm	/Users/tof/Coding/aoc2025d10/src/main.rs	/^fn lcm(a: i64, b: i64) -> i64 {$/;"	f
+lowest_common_multiple	/Users/tof/Coding/aoc2025d10/src/main.rs	/^    fn lowest_common_multiple() {$/;"	f
+machine_matrix	/Users/tof/Coding/aoc2025d10/src/main.rs	/^fn machine_matrix(buttons: &Vec<Vec<usize>>, joltages: &Vec<i64>) -> Vec<Vec<i64>> {$/;"	f
+machine_matrix_from_input	/Users/tof/Coding/aoc2025d10/src/main.rs	/^    fn machine_matrix_from_input() {$/;"	f
+main	/Users/tof/Coding/aoc2025d10/src/main.rs	/^fn main() {$/;"	f
+minimum_presses	/Users/tof/Coding/aoc2025d10/src/main.rs	/^fn minimum_presses(buttons: &Vec<Vec<usize>>, joltages: &Vec<i64>) -> i64 {$/;"	f
+minimum_presses_nominal_case	/Users/tof/Coding/aoc2025d10/src/main.rs	/^    fn minimum_presses_nominal_case() {$/;"	f
+minimum_presses_other_nominal_case	/Users/tof/Coding/aoc2025d10/src/main.rs	/^    fn minimum_presses_other_nominal_case() {$/;"	f
+over_specified_matrix_doesnt_matter	/Users/tof/Coding/aoc2025d10/src/main.rs	/^    fn over_specified_matrix_doesnt_matter() {$/;"	f
+print_matrix	/Users/tof/Coding/aoc2025d10/src/main.rs	/^fn print_matrix(matrix: Vec<Vec<i64>>) {$/;"	f
+reduce	/Users/tof/Coding/aoc2025d10/src/main.rs	/^fn reduce(matrix: &mut Vec<Vec<i64>>) {$/;"	f
+reduce_row	/Users/tof/Coding/aoc2025d10/src/main.rs	/^fn reduce_row(target_row: &mut [i64], source_row: &mut [i64], column: usize) {$/;"	f
+reducing_a_matrix	/Users/tof/Coding/aoc2025d10/src/main.rs	/^    fn reducing_a_matrix() {$/;"	f
+scale	/Users/tof/Coding/aoc2025d10/src/main.rs	/^fn scale(v: &mut [i64], k: i64) {$/;"	f
+scaling_a_vector	/Users/tof/Coding/aoc2025d10/src/main.rs	/^    fn scaling_a_vector() {$/;"	f
+set_constraints	/Users/tof/Coding/aoc2025d10/src/main.rs	/^fn set_constraints(buttons: &Vec<Vec<usize>>, joltages: &Vec<i64>) -> Vec<i64> {$/;"	f
+set_constraints_on_buttons_groups	/Users/tof/Coding/aoc2025d10/src/main.rs	/^    fn set_constraints_on_buttons_groups() {$/;"	f
+solve_matrix	/Users/tof/Coding/aoc2025d10/src/main.rs	/^fn solve_matrix($/;"	f
+solving_a_simple_matrix	/Users/tof/Coding/aoc2025d10/src/main.rs	/^    fn solving_a_simple_matrix() {$/;"	f
+swap	/Users/tof/Coding/aoc2025d10/src/main.rs	/^fn swap(v: &mut [i64], w: &mut [i64]) {$/;"	f
+swap_rows	/Users/tof/Coding/aoc2025d10/src/main.rs	/^fn swap_rows(matrix: &mut Vec<Vec<i64>>, source: usize, target: usize) {$/;"	f
