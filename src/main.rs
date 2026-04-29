@@ -104,8 +104,15 @@ fn machine_matrix(buttons: &Vec<Vec<usize>>, joltages: &Vec<i64>) -> Vec<Vec<i64
     matrix
 }
 
-fn minimum_presses(_buttons: &Vec<Vec<usize>>, _joltages: &Vec<i64>) -> i64 {
-  30  
+fn minimum_presses(buttons: &Vec<Vec<usize>>, joltages: &Vec<i64>) -> i64 {
+    let mut matrix: Vec<Vec<i64>> = machine_matrix(buttons, joltages);
+    reduce(&mut matrix);
+    let mut minimum: i64 = 10000000;
+    let diag_end = min(matrix.len(), buttons.len());
+    let initial_row = diag_end - 1;
+    let mut solution: Vec<i64> = vec![0; diag_end];
+    solve_matrix(&matrix, initial_row, &mut solution, &mut minimum);
+    minimum
 }
 fn main() {
     println!("Hello, world!");
