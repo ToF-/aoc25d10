@@ -67,6 +67,7 @@ fn reduce(matrix: &mut Vec<Vec<i64>>) {
             scale(&mut matrix[diag_index], -1)
         };
         print_matrix(matrix.to_vec());
+        println!("***");
         for row in diag_index + 1..matrix.len() {
             let (lower, upper) = matrix.split_at_mut(row);
             reduce_row(&mut upper[0], &mut lower[diag_index], diag_index);
@@ -74,8 +75,33 @@ fn reduce(matrix: &mut Vec<Vec<i64>>) {
     }
 }
 
-fn solve_matrix(matrix: &Vec<Vec<i64>>, row: usize, solution: &mut Vec<i64>, minimum: &mut i64) {
+fn set_constraints(buttons: &Vec<Vec<usize>>, joltages: &Vec<i64>) -> Vec<i64> {
+    let mut constraints: Vec<i64> = vec![10000000; buttons.len()];
+    for group in 0..buttons.len() {
+        for button in buttons[group].clone() {
+            constraints[group] = min(constraints[group], joltages[button]);
+        }
+    }
+    constraints
+}
+
+fn solve_matrix(
+    matrix: &Vec<Vec<i64>>,
+    row: usize,
+    next: usize,
+    constraints: Vec<i64>,
+    solution: &mut Vec<i64>,
+    minimum: &mut i64,
+) {
     assert!(matrix[row][row] > 0);
+    if next > row {
+        for guess in 0..constraints[next] + 1 {
+            solution[next] = guess;
+            solve_matrix(matrix, row, next - 1, constraints, solution, minimum);
+            return;
+        }
+    }
+    assert!(matrix[row][next] > 0);
     let mut row_target_sum: i64 = *matrix[row].last().expect("vector is empty");
     for k in (row + 1)..solution.len() {
         row_target_sum = row_target_sum - matrix[row][k] * solution[k];
@@ -83,7 +109,7 @@ fn solve_matrix(matrix: &Vec<Vec<i64>>, row: usize, solution: &mut Vec<i64>, min
     assert!(row_target_sum % matrix[row][row] == 0);
     solution[row] = row_target_sum / matrix[row][row];
     if row > 0 {
-        solve_matrix(matrix, row - 1, solution, minimum);
+        solve_matrix(matrix, row - 1, next, constraints, solution, minimum);
     } else {
         *minimum = min(*minimum, solution.iter().sum());
     }
@@ -94,9 +120,9 @@ fn machine_matrix(buttons: &Vec<Vec<usize>>, joltages: &Vec<i64>) -> Vec<Vec<i64
     let max_cols = buttons.len() + 1;
     let mut matrix: Vec<Vec<i64>> = vec![vec![0; max_cols]; max_rows];
     for row in 0..max_rows {
-        matrix[row][max_cols-1] = joltages[row];
+        matrix[row][max_cols - 1] = joltages[row];
     }
-    for col in 0..max_cols-1 {
+    for col in 0..max_cols - 1 {
         for button in buttons[col].clone() {
             matrix[button][col] = 1;
         }
@@ -111,7 +137,15 @@ fn minimum_presses(buttons: &Vec<Vec<usize>>, joltages: &Vec<i64>) -> i64 {
     let diag_end = min(matrix.len(), buttons.len());
     let initial_row = diag_end - 1;
     let mut solution: Vec<i64> = vec![0; diag_end];
-    solve_matrix(&matrix, initial_row, &mut solution, &mut minimum);
+    let constraints = set_constraints(&buttons, &joltages);
+    solve_matrix(
+        &matrix,
+        initial_row,
+        0,
+        constraints,
+        &mut solution,
+        &mut minimum,
+    );
     minimum
 }
 fn main() {
@@ -162,8 +196,18 @@ mod tests {
         let mut minimum: i64 = 10000000;
         let initial_row = m.len() - 1;
         let mut solution: Vec<i64> = vec![0; m.len()];
-        solve_matrix(&m, initial_row, &mut solution, &mut minimum);
+        let buttons: Vec<Vec<usize>> = vec![vec![2, 3], vec![1, 3], vec![1, 2, 3], vec![0, 3]];
+        let joltages: Vec<i64> = vec![3, 23, 16, 30];
+        let constraints = set_constraints(&buttons, &joltages);
+        solve_matrix(&m, initial_row, 0, constraints, &mut solution, &mut minimum);
         assert_eq!(30, minimum);
+    }
+    #[test]
+    fn set_constraints_on_buttons_groups() {
+        let buttons: Vec<Vec<usize>> = vec![vec![2, 3], vec![1, 3], vec![1, 2, 3], vec![0, 3]];
+        let joltages: Vec<i64> = vec![3, 23, 16, 30];
+        let constraints: Vec<i64> = set_constraints(&buttons, &joltages);
+        assert_eq!(vec![16, 23, 16, 3], constraints);
     }
     #[test]
     fn over_specified_matrix_doesnt_matter() {
@@ -176,16 +220,19 @@ mod tests {
             vec![0, 0, 0, 1, 3],
         ];
         let mut minimum: i64 = 10000000;
-        let diag_end = min(m.len(), m[0].len() -  1);
+        let diag_end = min(m.len(), m[0].len() - 1);
         let initial_row = diag_end - 1;
 
         let mut solution: Vec<i64> = vec![0; diag_end];
-        solve_matrix(&m, initial_row, &mut solution, &mut minimum);
+        let buttons: Vec<Vec<usize>> = vec![vec![2, 3], vec![1, 3], vec![1, 2, 3], vec![0, 3]];
+        let joltages: Vec<i64> = vec![3, 23, 16, 30];
+        let constraints = set_constraints(&buttons, &joltages);
+        solve_matrix(&m, initial_row, 0, constraints, &mut solution, &mut minimum);
         assert_eq!(30, minimum);
     }
     #[test]
     fn machine_matrix_from_input() {
-        let buttons: Vec<Vec<usize>> = vec![vec![2, 3], vec![1, 3], vec![1,2,3], vec![0, 3]];
+        let buttons: Vec<Vec<usize>> = vec![vec![2, 3], vec![1, 3], vec![1, 2, 3], vec![0, 3]];
         let joltages: Vec<i64> = vec![3, 23, 16, 30];
         let m: Vec<Vec<i64>> = vec![
             vec![0, 0, 0, 1, 3],
@@ -197,8 +244,20 @@ mod tests {
     }
     #[test]
     fn minimum_presses_nominal_case() {
-        let buttons: Vec<Vec<usize>> = vec![vec![2, 3], vec![1, 3], vec![1,2,3], vec![0, 3]];
+        let buttons: Vec<Vec<usize>> = vec![vec![2, 3], vec![1, 3], vec![1, 2, 3], vec![0, 3]];
         let joltages: Vec<i64> = vec![3, 23, 16, 30];
+        assert_eq!(30, minimum_presses(&buttons, &joltages));
+    }
+    #[test]
+    fn minimum_presses_other_nominal_case() {
+        let buttons: Vec<Vec<usize>> = vec![
+            vec![0, 2, 3, 4],
+            vec![2, 3],
+            vec![0, 4],
+            vec![0, 1, 2],
+            vec![1, 2, 3, 4],
+        ];
+        let joltages: Vec<i64> = vec![7, 5, 12, 7, 2];
         assert_eq!(30, minimum_presses(&buttons, &joltages));
     }
 }
