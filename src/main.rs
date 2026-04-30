@@ -110,13 +110,10 @@ fn swap_rows(matrix: &mut Vec<Vec<i64>>, source: usize, target: usize) {
 }
 
 fn reduce(matrix: &mut Vec<Vec<i64>>) {
-    println!("starting with matrix");
-    print_matrix(matrix.to_vec());
     let diag_end = min(matrix.len(), matrix[0].len() - 1);
     for diag_index in 0..diag_end {
         for row in diag_index..diag_end {
             if matrix[row][diag_index] != 0 {
-                println!("pivot found in {row} {diag_index}");
                 if row != diag_index {
                     swap_rows(matrix, diag_index, row);
                 }
@@ -130,9 +127,6 @@ fn reduce(matrix: &mut Vec<Vec<i64>>) {
             let (lower, upper) = matrix.split_at_mut(row);
             reduce_row(&mut upper[0], &mut lower[diag_index], diag_index);
         }
-        println!("after row reduction");
-        print_matrix(matrix.to_vec());
-        println!("***");
     }
 }
 
@@ -154,6 +148,7 @@ fn solve_matrix(
     solution: &mut Vec<i64>,
     minimum: &mut i64,
 ) {
+    println!("solutions:{:?}", solution);
     if next > row {
         for guess in 0..=constraints[next] {
             solution[next] = guess;
@@ -170,6 +165,7 @@ fn solve_matrix(
     }
     assert!(row == next);
     if matrix[row][next] == 0 {
+        println!("matrix[{}][{}] = 0, must try values between 0 and {}", row, next, constraints[row]);
         for guess in 0..=constraints[next] {
             solution[next] = guess;
             if next > 0 {
@@ -232,7 +228,7 @@ fn minimum_presses(buttons: &Vec<Vec<usize>>, joltages: &Vec<i64>) -> i64 {
     let constraints = set_constraints(&buttons, &joltages);
     let next = constraints.len() - 1;
     println!("next:{next}");
-    println!("matrix:\n{:?}", matrix);
+    print_matrix(matrix.clone());
     solve_matrix(
         &matrix,
         initial_row,
@@ -326,10 +322,10 @@ mod tests {
         let diag_end = min(m.len(), m[0].len() - 1);
         let initial_row = diag_end - 1;
 
-        let mut solution: Vec<i64> = vec![0; diag_end];
         let buttons: Vec<Vec<usize>> = vec![vec![2, 3], vec![1, 3], vec![1, 2, 3], vec![0, 3]];
         let joltages: Vec<i64> = vec![3, 23, 16, 30];
         let constraints = set_constraints(&buttons, &joltages);
+        let mut solution: Vec<i64> = vec![0; buttons.len()];
         let next = buttons.len() - 1;
         solve_matrix(
             &m,
