@@ -1,4 +1,62 @@
+use regex::Regex;
+use std::fs::read_to_string;
 use std::cmp::min;
+use std::fs::File;
+use std::io::{self, BufRead, BufReader};
+
+#[derive(Debug)]
+struct Machine {
+    lights: u64,
+    buttons: Vec<Vec<usize>>,
+    joltages: Vec<i64>,
+}
+
+fn parse_machine(line: &str) -> Machine {
+    // 1) lights -> integer
+    let lights_str = line.split(']').next().unwrap().trim_start_matches('[');
+
+    let lights = lights_str.chars().fold(0u64, |acc, c| {
+        (acc << 1)
+            | match c {
+                '#' => 1,
+                '.' => 0,
+                _ => 0,
+            }
+    });
+    // 2) vec of vecs from (…)
+    let re_paren = Regex::new(r"\(([^)]*)\)").unwrap();
+    let buttons = re_paren
+        .captures_iter(line)
+        .map(|cap| {
+            cap[1]
+                .split(',')
+                .filter(|s| !s.trim().is_empty())
+                .map(|n| n.trim().parse::<usize>().unwrap())
+                .collect::<Vec<usize>>()
+        })
+        .collect::<Vec<Vec<usize>>>();
+    // 3) vec from {…}
+    let re_brace = Regex::new(r"\{([^}]*)\}").unwrap();
+    let joltages = re_brace
+        .captures(line)
+        .map(|cap| {
+            cap[1]
+                .split(',')
+                .map(|n| n.trim().parse::<i64>().unwrap())
+                .collect::<Vec<i64>>()
+        })
+        .unwrap_or_default();
+
+    Machine {
+        lights,
+        buttons,
+        joltages,
+    }
+}
+
+fn parse_input(lines: Vec<&str>) -> Vec<Machine> {
+    lines.into_iter().map(|s| parse_machine(s)).collect()
+}
 
 fn lcm(a: i64, b: i64) -> i64 {
     fn gcd(mut a: i64, mut b: i64) -> i64 {
@@ -96,8 +154,6 @@ fn solve_matrix(
     solution: &mut Vec<i64>,
     minimum: &mut i64,
 ) {
-    println!("solution:");
-    println!("{:?}", solution);
     if next > row {
         for guess in 0..=constraints[next] {
             solution[next] = guess;
@@ -112,7 +168,6 @@ fn solve_matrix(
         }
         return;
     }
-    println!("row:{} next:{}", row, next);
     assert!(row == next);
     if matrix[row][next] == 0 {
         for guess in 0..=constraints[next] {
@@ -135,12 +190,20 @@ fn solve_matrix(
     for k in (row + 1)..solution.len() {
         row_target_sum = row_target_sum - matrix[row][k] * solution[k];
     }
+    if row_target_sum % matrix[row][next] != 0 {
+        return
+    }
     assert!(row_target_sum % matrix[row][row] == 0);
-    solution[row] = row_target_sum / matrix[row][row];
+    let tentative_solution = row_target_sum / matrix[row][row];
+    if tentative_solution < 0 {
+        return 
+    }
+    solution[next] = tentative_solution;
     if next > 0 {
         solve_matrix(matrix, row - 1, next - 1, constraints, solution, minimum);
     } else {
         *minimum = min(*minimum, solution.iter().sum());
+        println!("******************* minimum:{minimum}");
     }
 }
 
@@ -165,9 +228,11 @@ fn minimum_presses(buttons: &Vec<Vec<usize>>, joltages: &Vec<i64>) -> i64 {
     let mut minimum: i64 = 10000000;
     let diag_end = min(matrix.len(), buttons.len());
     let initial_row = diag_end - 1;
-    let mut solution: Vec<i64> = vec![0; diag_end];
+    let mut solution: Vec<i64> = vec![0; buttons.len()];
     let constraints = set_constraints(&buttons, &joltages);
-    let next = constraints.len()-1;
+    let next = constraints.len() - 1;
+    println!("next:{next}");
+    println!("matrix:\n{:?}", matrix);
     solve_matrix(
         &matrix,
         initial_row,
@@ -305,5 +370,30 @@ mod tests {
         ];
         let joltages: Vec<i64> = vec![7, 5, 12, 7, 2];
         assert_eq!(12, minimum_presses(&buttons, &joltages));
+    }
+
+    #[test]
+    fn parsing_input() {
+        let lines: Vec<&str> = vec![
+            "[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}",
+            "[...#.] (0,2,3,4) (2,3) (0,4) (0,1,2) (1,2,3,4) {7,5,12,7,2}",
+            "[.###.#] (0,1,2,3,4) (0,3,4) (0,1,2,4,5) (1,2) {10,11,11,5,10,5}",
+        ];
+        let machines = parse_input(lines);
+        assert_eq!(
+            vec![vec![3], vec![1, 3], vec![2], vec![2, 3], vec![0, 2], vec![0, 1]],
+            machines[0].buttons
+        );
+    }
+    #[test]
+    fn sample_result() {
+        let path = "testdata/sample.txt";
+        let content =read_to_string(path).expect("File not found.");
+        let lines = content.lines().collect();
+        let machines = parse_input(lines);
+        let result = machines.into_iter().fold(0, |acc, machine|
+            acc + minimum_presses(&machine.buttons, &machine.joltages)
+        );
+        assert_eq!(33, result);
     }
 }
